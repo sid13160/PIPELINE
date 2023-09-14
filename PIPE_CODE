@@ -1,0 +1,49 @@
+pipeline{
+    agent any
+     options {
+        // Timeout counter starts AFTER agent is allocated
+        timeout(time: 1, unit: 'SECONDS')
+    }
+    parameters {
+        string(name: 'Person', defaultValue: 'SUNNY', description: 'I am the owner of this.' )
+        booleanParam(name: 'Male',defaultValue: 'True', description: 'Select Your Sex.')
+        choice(name: 'CITY', choices: ['Agra','Aligarh','Khurja'], description: 'Select your city')
+            }
+    stages{
+        stage('TEST'){
+            steps{
+                bat '''
+                echo %Person%' 
+                echo TEST
+                '''
+                
+            }
+        }
+        stage('BUILD'){
+            steps{
+                bat '''
+                echo %Male
+                echo BUILD
+                '''
+            }
+        }
+        stage('DEPLOY_TEST'){
+            steps{
+                bat '''
+                echo %CITY%
+                echo Deploy to Test Server
+                '''
+                
+            }
+        }
+        stage('DEPLOY_PROD'){
+            input {
+                message 'Should we continue'
+                ok 'yes|Continue'
+            }
+            steps{
+                bat 'echo Deploy to Production'
+            }
+        }    
+    }        
+}
